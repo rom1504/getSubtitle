@@ -6,4 +6,4 @@ Clone this repo somewhere then just make a symbolic link towards getSubtitle.pl 
 For example ln -s /home/user/getSubtitle/getSubtitle.pl /home/user/bin/getSubtitle
 
 ## Usage
-getSubtitle <video file name>
+`getSubtitle <video file name>`
