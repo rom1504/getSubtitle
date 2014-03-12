@@ -16,7 +16,6 @@ sub bug
 	exit 1;
 }
 
-
 sub get_subtitle_page
 {
 	my ($videoFileName)=@_;
@@ -24,7 +23,7 @@ sub get_subtitle_page
 	my $req=HTTP::Request->new(GET=>$url);
 	my $res=$ua->request($req);
 	my $page=$res->content;
-	if(!($page=~/<tr><td><img src="images\/television.png" \/><\/td><td><a href="(.+?)" debug="[0-9]+">.+?<\/a><\/td><\/tr>/)) {bug("get subtitle page");}
+	if(!($page=~/<tr><td><img src="http:\/\/cdn\.addic7ed\.com\/images\/television\.png" \/><\/td><td><a href="(.+?)" debug="[0-9]+">.+?<\/a><\/td><\/tr>/)) {bug("get subtitle page");}
 	my $subtitlePage=$1;
 	return "http://www.addic7ed.com/".$subtitlePage;
 	
