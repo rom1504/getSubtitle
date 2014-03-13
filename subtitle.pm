@@ -40,14 +40,23 @@ sub get_subtitle
 	my $page=$res->content;
 	#print($page);
 	my $sub="";
-	while($page=~/<td width="21%" class="language">English<a href="javascript:saveFavorite.+?">.+?<a class="buttonDownload" href="(.+?)"><strong>(?:original|Download)<\/strong><\/a>(?:\s+<a class="buttonDownload" href="(.+?)"><strong>most updated<\/strong><\/a><\/td>)?/gs)
+	my $rightVersionSub="";
+	my $max=0;
+	my $maxRightVersion=0;
+	while($page=~/Version (.+?), 0.00 MBs.+?<td width="21%" class="language">English<a href="javascript:saveFavorite.+?">.+?<a class="buttonDownload" href="(.+?)"><strong>(?:original|Download)<\/strong><\/a>(?:\s+<a class="buttonDownload" href="(.+?)"><strong>most updated<\/strong><\/a><\/td>)?.+?· ([0-9]+) Downloads/gs)
 	{
-		if($2 ne "") {$sub=$2;last;}
-		$sub=$1;
+		if($4>$max)
+		{
+			if($3 ne "") {$sub=$3;}
+			else {$sub=$2;}
+			$max=$4;
+		}
+		if($4>$maxRightVersion && $1 =~ /$videoFileName/i) {$rightVersionSub=$sub;$maxRightVersion=$4;}
 	}
+	$sub=$rightVersionSub eq "" ? $sub : $rightVersionSub;
 	if($sub eq "") {bug("get subtitle");}
 	my $subtitle="http://www.addic7ed.com".$sub;
- 	#print($subtitle."\n");
+	#print($subtitle."\n");
 	my @a=split('\.',$videoFileName);
 	pop(@a);
 	my $subtitleFileName=join('.',@a).".en.srt";
