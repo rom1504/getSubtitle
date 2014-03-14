@@ -34,16 +34,15 @@ sub get_subtitle
 {
 	my ($videoFileName)=@_;
 	my $url=get_subtitle_page($videoFileName);
-# 	print($url."\n");
+ 	#print($url."\n");
 	my $req=HTTP::Request->new(GET=>$url);
 	my $res=$ua->request($req);
 	my $page=$res->content;
-	#print($page);
 	my $sub="";
 	my $rightVersionSub="";
 	my $max=0;
 	my $maxRightVersion=0;
-	while($page=~/Version (.+?), 0.00 MBs.+?<td width="21%" class="language">English<a href="javascript:saveFavorite.+?">.+?<a class="buttonDownload" href="(.+?)"><strong>(?:original|Download)<\/strong><\/a>(?:\s+<a class="buttonDownload" href="(.+?)"><strong>most updated<\/strong><\/a><\/td>)?.+?· ([0-9]+) Downloads/gs)
+	while($page=~/Version (.+?), [0-9]+.00 MBs.+?<td width="21%" class="language">English<a href="javascript:saveFavorite.+?">.+?<a class="buttonDownload" href="(.+?)"><strong>(?:original|Download)<\/strong><\/a>(?:\s+<a class="buttonDownload" href="(.+?)"><strong>most updated<\/strong><\/a><\/td>)?.+?· ([0-9]+) Downloads/gs)
 	{
 		if($4>$max)
 		{
@@ -56,7 +55,7 @@ sub get_subtitle
 	$sub=$rightVersionSub eq "" ? $sub : $rightVersionSub;
 	if($sub eq "") {bug("get subtitle");}
 	my $subtitle="http://www.addic7ed.com".$sub;
-	#print($subtitle."\n");
+# 	print($subtitle."\n");
 	my @a=split('\.',$videoFileName);
 	pop(@a);
 	my $subtitleFileName=join('.',@a).".en.srt";
