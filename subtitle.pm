@@ -20,13 +20,7 @@ sub get_subtitle_page
 {
 	my ($videoFileName)=@_;
 	$videoFileName =~ s/([0-9])([0-9]{2})/S0$1E$2/;
-	my $url="http://www.addic7ed.com/search.php?search=".$videoFileName."&Submit=Search";
-	my $req=HTTP::Request->new(GET=>$url);
-	my $res=$ua->request($req);
-	my $page=$res->content;
-	if(!($page=~/<tr><td><img src="http:\/\/cdn\.addic7ed\.com\/images\/television\.png" \/><\/td><td><a href="(.+?)" debug="[0-9]+">.+?<\/a><\/td><\/tr>/)) {bug("get subtitle page");}
-	my $subtitlePage=$1;
-	return "http://www.addic7ed.com/".$subtitlePage;
+	return "http://www.addic7ed.com/search.php?search=".$videoFileName."&Submit=Search";
 	
 }
 
