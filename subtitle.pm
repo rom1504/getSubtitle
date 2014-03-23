@@ -26,7 +26,7 @@ sub get_subtitle_page
 
 sub get_subtitle
 {
-	my ($videoFileName)=@_;
+	my ($videoFileName,$subtitleFileName)=@_;
 	my $url=get_subtitle_page($videoFileName);
  	#print($url."\n");
 	my $req=HTTP::Request->new(GET=>$url);
@@ -50,9 +50,12 @@ sub get_subtitle
 	if($sub eq "") {bug("get subtitle");}
 	my $subtitle="http://www.addic7ed.com".$sub;
 # 	print($subtitle."\n");
-	my @a=split('\.',$videoFileName);
-	pop(@a);
-	my $subtitleFileName=join('.',@a).".en.srt";
+	if($subtitleFileName eq "")
+	{
+		my @a=split('\.',$videoFileName);
+		pop(@a);
+		$subtitleFileName=join('.',@a).".en.srt";
+	}
 	my $req=HTTP::Request->new(GET=>$subtitle);
 	$req->header("Referer"=> $url);
 	my $res=$ua->request($req);
