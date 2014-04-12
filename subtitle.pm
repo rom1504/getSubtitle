@@ -19,7 +19,7 @@ sub bug
 sub get_subtitle_page
 {
 	my ($videoFileName)=@_;
-	$videoFileName =~ s/([0-9])([0-9]{2})/S0$1E$2/;
+	if(!($videoFileName =~ /s[0-9]+e[0-9]+/i)) {$videoFileName =~ s/([0-9])([0-9]{2})/S0$1E$2/;}
 	return "http://www.addic7ed.com/search.php?search=".$videoFileName."&Submit=Search";
 	
 }
@@ -28,7 +28,6 @@ sub get_subtitle
 {
 	my ($videoFileName,$subtitleFileName)=@_;
 	my $url=get_subtitle_page($videoFileName);
- 	#print($url."\n");
 	my $req=HTTP::Request->new(GET=>$url);
 	my $res=$ua->request($req);
 	my $page=$res->content;
