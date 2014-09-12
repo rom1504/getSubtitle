@@ -3,6 +3,7 @@ package subtitle;
 use strict;
 use Encode;
 use LWP::UserAgent;
+use Text::Levenshtein qw(distance);
 my $ua=LWP::UserAgent->new;
 $ua->agent("MyApp/0.1 ");
 $ua->timeout(30);
@@ -27,6 +28,12 @@ sub get_subtitle
 {
 	my ($videoFileName,$subtitleFileName,$verbose)=@_;
 	if(!(defined $verbose)) {$verbose=0;}
+	my $videoVersion=$videoFileName;
+	if($videoFileName =~ /s[0-9]+e[0-9]+(.+)$/i) {$videoVersion=$1;}
+	$videoVersion =~ s/\[.+\]//;
+	$videoVersion =~ s/HDTV//;
+	$videoVersion =~ s/^\s+//;
+	$videoVersion =~ s/\s+$//;
 	my $url=get_subtitle_page($videoFileName);
 	my $req=HTTP::Request->new(GET=>$url);
 	my $res=$ua->request($req);
@@ -47,13 +54,14 @@ sub get_subtitle
 			$sub=$updatedDownloadLink;
 			$max=$numberOfDownload;
 		}
-		if($verbose) {print("sub title version : ".$version." | ".$updatedDownloadLink."\n");}
-		if($numberOfDownload>$maxRightVersion && $videoFileName =~ /$version/i)
+		if($verbose) {print("sub title version : ".$version." | ".$updatedDownloadLink." | ".distance($videoVersion,$version)."\n");}
+		if($numberOfDownload>$maxRightVersion && ($videoVersion =~ /$version/i || $version =~ /$videoVersion/i))
 		{
 			$rightVersionSub=$updatedDownloadLink;$maxRightVersion=$numberOfDownload;
 			if($verbose) {print("sub title right version : ".$version." | ".$updatedDownloadLink."\n");}
 		}
 	}
+	if($verbose) {print("Video version : ".$videoVersion."\n");}
 	if($verbose) {print("Video file name : ".$videoFileName."\n");}
 	if($verbose) {print("Right file : ".$rightVersionSub."\n");}
 	$sub=$rightVersionSub eq "" ? $sub : $rightVersionSub;
