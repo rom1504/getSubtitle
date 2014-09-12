@@ -13,4 +13,6 @@ if((scalar @ARGV)==0 || (scalar @ARGV)>2)
 }
 my ($videoFileName,$subtitleFileName)=@ARGV;
 
-subtitle::get_subtitle($videoFileName,$subtitleFileName);
+subtitle::get_subtitle($videoFileName,$subtitleFileName
+# ,1
+);
