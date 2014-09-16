@@ -30,7 +30,7 @@ sub get_subtitle
 	if(!(defined $verbose)) {$verbose=0;}
 	my $videoVersion=$videoFileName;
 	if($videoFileName =~ /s[0-9]+e[0-9]+(.+)$/i) {$videoVersion=$1;}
-	$videoVersion =~ s/\[.+\]//;
+	$videoVersion =~ s/\[.+$//;
 	$videoVersion =~ s/HDTV//;
 	$videoVersion =~ s/^\s+//;
 	$videoVersion =~ s/\s+$//;
