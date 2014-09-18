@@ -38,10 +38,13 @@ sub get_subtitle
 	my $req=HTTP::Request->new(GET=>$url);
 	my $res=$ua->request($req);
 	my $page=$res->content;
-	my $sub="";
+	my $maxDownloadSub="";
 	my $rightVersionSub="";
 	my $max=0;
 	my $maxRightVersion=0;
+	my $levVersionSub="";
+	my $minLevDistance=99999;
+	my $maxMinLev=0;
 	while($page=~/Version (.+?), [0-9]+\.[0-9]+ MBs.+?<td width="21%" class="language">English<a href="javascript:saveFavorite.+?">.+?<a class="buttonDownload" href="(.+?)"><strong>(?:original|Download)<\/strong><\/a>(?:\s+<a class="buttonDownload" href="(.+?)"><strong>most updated<\/strong><\/a><\/td>)?.+?· ([0-9]+) Downloads/gs)
 	{
 		my $version=$1;
@@ -49,22 +52,33 @@ sub get_subtitle
 		my $mostUpdatedDownloadLink=$3;
 		my $updatedDownloadLink=$mostUpdatedDownloadLink ne "" ? $mostUpdatedDownloadLink : $originalDownloadLink;
 		my $numberOfDownload=$4;
+		my $levDistance=distance($videoVersion,$version);
 		if($numberOfDownload>$max)
 		{
-			$sub=$updatedDownloadLink;
+			$maxDownloadSub=$updatedDownloadLink;
 			$max=$numberOfDownload;
 		}
-		if($verbose) {print("sub title version : ".$version." | ".$updatedDownloadLink." | ".distance($videoVersion,$version)."\n");}
+		if($verbose) {print("sub title version : ".$version." | ".$updatedDownloadLink." | ".$numberOfDownload." | ".$levDistance."\n");}
 		if($numberOfDownload>$maxRightVersion && ($videoVersion =~ /$version/i || $version =~ /$videoVersion/i))
 		{
-			$rightVersionSub=$updatedDownloadLink;$maxRightVersion=$numberOfDownload;
-			if($verbose) {print("sub title right version : ".$version." | ".$updatedDownloadLink."\n");}
+			$rightVersionSub=$updatedDownloadLink;
+			$maxRightVersion=$numberOfDownload;
+			if($verbose) {print("sub title right version"."\n");}
+		}
+		if($levDistance<$minLevDistance || ($levDistance==$minLevDistance && $numberOfDownload>$maxMinLev))
+		{
+			$levVersionSub=$updatedDownloadLink;
+			$minLevDistance=$levDistance;
+			$maxMinLev=$numberOfDownload;
+			if($verbose) {print("sub title lev version"."\n");}
 		}
 	}
 	if($verbose) {print("Video version : ".$videoVersion."\n");}
 	if($verbose) {print("Video file name : ".$videoFileName."\n");}
-	if($verbose) {print("Right file : ".$rightVersionSub."\n");}
-	$sub=$rightVersionSub eq "" ? $sub : $rightVersionSub;
+	if($verbose) {print("Max download file : ".$maxDownloadSub."\n");}
+	if($verbose) {print("Right version file : ".$rightVersionSub."\n");}
+	if($verbose) {print("Lev version file : ".$levVersionSub."\n");}
+	my $sub=$rightVersionSub eq "" ? $levVersionSub : $rightVersionSub;
 	if($sub eq "") {bug("get subtitle");}
 	my $subtitle="http://www.addic7ed.com".$sub;
 	if($verbose) {print("Final file : ".$subtitle."\n");}
