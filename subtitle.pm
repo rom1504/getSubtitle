@@ -26,10 +26,10 @@ sub get_subtitle_page
 
 sub get_actual_subtitle_page
 {
-	my ($seriesListPageContent)=@_;
+	my ($seriesListPageContent,$verbose)=@_;
 	if(!($seriesListPageContent =~ /<a href="(\S+)" debug="[0-9]+">.+<\/a><\/td>/)) {bug("can't find the actual subtitle page url");}
 	my $pageUrl="http://www.addic7ed.com/".$1;
-	print($pageUrl."\n");
+	if($verbose) {print("actual subtitle page : ".$pageUrl."\n");}
 	my $req=HTTP::Request->new(GET=>$pageUrl);
 	my $res=$ua->request($req);
 	my $page=$res->content;
@@ -51,7 +51,7 @@ sub get_subtitle
 	my $req=HTTP::Request->new(GET=>$url);
 	my $res=$ua->request($req);
 	my $page=$res->content;
-	if($page =~ /results found/) {$page=get_actual_subtitle_page($page);}
+	if($page =~ /results found/) {$page=get_actual_subtitle_page($page,$verbose);}
 	my $maxDownloadSub="";
 	my $rightVersionSub="";
 	my $max=0;
